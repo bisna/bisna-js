@@ -60,12 +60,14 @@ var Bisna = (function () {
          */
         dispose: function (name)
         {
-            if (typeof instanceList[name].dispose === 'function') {
-                instanceList[name].dispose();
-            }
+            if (typeof instanceList[name] !== 'undefined') {
+                if (typeof instanceList[name].dispose === 'function') {
+                    instanceList[name].dispose();
+                }
 
-            instanceList[name] = null;
-            delete instanceList[name];
+                instanceList[name] = null;
+                delete instanceList[name];
+            }
 
             moduleList[name] = null;
             delete moduleList[name];
