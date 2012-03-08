@@ -13,6 +13,7 @@ Bisna.register('event-manager', function (Bisna) {
 
         /**
          * Dispose Module instance
+         * 
          */
         dispose: function ()
         {
