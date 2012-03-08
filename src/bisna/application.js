@@ -24,7 +24,7 @@ var Bisna = (function () {
          */
         resolve: function (name)
         {
-            if ( ! Bisna.contains(name)) {
+            if ( ! Bisna.contains(name, false)) {
                 throw new Error('Unable to locate module "' + name + '".');
             }
 
@@ -44,13 +44,17 @@ var Bisna = (function () {
         /**
          * Check module existance
          *
-         * @param string    name    Module name
+         * @param string    name        Module name
+         * @param boolean   instance    Turn module contains check to module instance check
          *
-         * @return boolean  Module existance
+         * @return boolean  Module or Module instance existance
          */
-        contains: function (name)
+        contains: function (name, instance)
         {
-            return moduleList.hasOwnProperty(name);
+            instance = instance || false;
+
+            return moduleList.hasOwnProperty(name)
+                && ( ! instance || instanceList.hasOwnProperty(name));
         },
 
         /**
