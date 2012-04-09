@@ -1,4 +1,5 @@
 Bisna.register('event-manager', function (Bisna) {
+
     var listenerList = null;
 
     return {
@@ -13,7 +14,7 @@ Bisna.register('event-manager', function (Bisna) {
 
         /**
          * Dispose Module instance
-         * 
+         *
          */
         dispose: function ()
         {
@@ -21,6 +22,7 @@ Bisna.register('event-manager', function (Bisna) {
 
             for (type in listenerList) {
                 listenerList[type] = null;
+
                 delete listenerList[type];
             }
 
@@ -30,9 +32,9 @@ Bisna.register('event-manager', function (Bisna) {
         /**
          * Add a new event listener
          *
-         * @param string    type    Event type
-         * @param function  handler Event handler function
-         * @param object    scope   Event scope
+         * @param type    Event type
+         * @param handler Event handler function
+         * @param scope   Event scope object
          */
         addEventListener: function (type, handler, scope)
         {
@@ -51,40 +53,45 @@ Bisna.register('event-manager', function (Bisna) {
         /**
          * Remove an existing event listener
          *
-         * @param string    type    Event type
-         * @param function  handler Event handler function
+         * @param type    Event type
+         * @param handler Event handler function
          */
         removeEventListener: function (type, handler)
         {
             var listenerTypeList,
                 index, length;
 
-            if (typeof listenerList[type] !== 'undefined') {
-                listenerTypeList = listenerList[type];
+            if (typeof listenerList[type] === 'undefined') {
+                return this;
+            }
 
-                for (index = 0, length = listenerTypeList.length; index < length; index++) {
-                    if (listenerTypeList[index].handler === handler) {
-                        listenerTypeList.splice(index, 1);
+            listenerTypeList = listenerList[type];
 
-                        break;
-                    }
-                }
+            for (index = 0, length = listenerTypeList.length; index < length; index++) {
+                if (listenerTypeList[index].handler !== handler) {
+                    listenerTypeList.splice(index, 1);
 
-                if (listenerTypeList.length === 0) {
-                    listenerList[type] = null;
-                    delete listenerList[type];
+                    break;
                 }
             }
+
+            if (listenerTypeList.length === 0) {
+                listenerList[type] = null;
+
+                delete listenerList[type];
+            }
+
+            return this;
         },
 
         /**
          * Check existance of an event listener
          *
-         * @param string    type    Event type
+         * @param type  Event type
          *
          * @return boolean  Event listener existance
          */
-        hasListener: function (type)
+        hasEventListener: function (type)
         {
             return (typeof listenerList[type] !== 'undefined' && listenerList[type].length > 0);
         },
@@ -92,9 +99,9 @@ Bisna.register('event-manager', function (Bisna) {
         /**
          * Dispatch an event
          *
-         * @param string    type    Event type
-         * @param object    data    Event data
-         * @param object    target  Event target
+         * @param type    Event type
+         * @param data    Event data object
+         * @param target  Event target object
          *
          * @return boolean  Flag referring if event is preventing default action
          */
@@ -111,18 +118,20 @@ Bisna.register('event-manager', function (Bisna) {
                 },
                 index, length;
 
-            if (typeof listenerList[event.type] !== 'undefined') {
-                listenerTypeList = listenerList[event.type];
+            if (typeof listenerList[event.type] === 'undefined') {
+                return true;
+            }
 
-                for (index = 0, length = listenerTypeList.length; index < length; index++) {
-                    if (event.stopPropagation) {
-                        break;
-                    }
+            listenerTypeList = listenerList[event.type];
 
-                    event.currentTarget = listenerTypeList[index].scope;
-
-                    listenerTypeList[index].handler(event);
+            for (index = 0, length = listenerTypeList.length; index < length; index++) {
+                if (event.stopPropagation) {
+                    break;
                 }
+
+                event.currentTarget = listenerTypeList[index].scope;
+
+                listenerTypeList[index].handler(event);
             }
 
             return ! event.preventDefault;

@@ -24,10 +24,6 @@ var Bisna = (function () {
          */
         resolve: function (name)
         {
-            if ( ! Bisna.contains(name, false)) {
-                throw new Error('Unable to locate module "' + name + '".');
-            }
-
             if (typeof instanceList[name] !== 'undefined') {
                 return instanceList[name];
             }
@@ -70,10 +66,12 @@ var Bisna = (function () {
                 }
 
                 instanceList[name] = null;
+
                 delete instanceList[name];
             }
 
             moduleList[name] = null;
+
             delete moduleList[name];
         }
     };
