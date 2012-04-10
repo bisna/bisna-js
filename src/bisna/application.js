@@ -7,8 +7,8 @@ var Bisna = (function () {
         /**
          * Register a new module
          *
-         * @param string    name         Module name
-         * @param function  constructor  Module constructor
+         * @param name         Module name
+         * @param constructor  Module constructor function
          */
         register: function (name, constructor)
         {
@@ -16,9 +16,33 @@ var Bisna = (function () {
         },
 
         /**
+         * Unregister an existing module
+         *
+         * @param name  Module name
+         */
+        unregister: function (name)
+        {
+            moduleList[name] = null;
+
+            delete moduleList[name];
+        },
+
+        /**
+         * Check module existance
+         *
+         * @param name      Module name
+         *
+         * @return boolean  Module existance
+         */
+        isRegistered: function (name)
+        {
+            return moduleList.hasOwnProperty(name);
+        },
+
+        /**
          * Resolve a module name, retrieving a module instance
          *
-         * @param string    name    Module name
+         * @param name      Module name
          *
          * @return object   Module instance
          */
@@ -38,41 +62,35 @@ var Bisna = (function () {
         },
 
         /**
-         * Check module existance
-         *
-         * @param string    name        Module name
-         * @param boolean   instance    Turn module contains check to module instance check
-         *
-         * @return boolean  Module or Module instance existance
-         */
-        contains: function (name, instance)
-        {
-            instance = instance || false;
-
-            return moduleList.hasOwnProperty(name)
-                && ( ! instance || instanceList.hasOwnProperty(name));
-        },
-
-        /**
          * Dispose a Module instance
          *
-         * @param string    name    Module name
+         * @param name    Module name
          */
         dispose: function (name)
         {
-            if (typeof instanceList[name] !== 'undefined') {
-                if (typeof instanceList[name].dispose === 'function') {
-                    instanceList[name].dispose();
-                }
-
-                instanceList[name] = null;
-
-                delete instanceList[name];
+            if (typeof instanceList[name] === 'undefined') {
+                return;
             }
 
-            moduleList[name] = null;
+            if (typeof instanceList[name].dispose === 'function') {
+                instanceList[name].dispose();
+            }
 
-            delete moduleList[name];
+            instanceList[name] = null;
+
+            delete instanceList[name];
+        },
+
+        /**
+         * Check module instance existance
+         *
+         * @param name      Module name
+         *
+         * @return boolean  Module instance existance
+         */
+        contains: function (name)
+        {
+            return instanceList.hasOwnProperty(name);
         }
     };
 

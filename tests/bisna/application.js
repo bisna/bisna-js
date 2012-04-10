@@ -1,43 +1,31 @@
-module('Bisna application');
-
-
-QUnit.reset(function () {
-    Bisna.dispose('test');
+module('Bisna application', {
+    teardown: function () {
+        Bisna.dispose('test');
+    }
 });
 
 
-test('Test register', function () {
+test('Test register', 1, function () {
     Bisna.register('test', function () { return {}; });
 
-    ok(Bisna.contains('test'), 'Bisna should contain module "test".');
+    ok(Bisna.isRegistered('test'), 'Bisna should contain module "test".');
 });
 
-test('Test contains', function () {
+test('Test unregister', 2, function () {
     Bisna.register('test', function () { return {}; });
 
-    ok(Bisna.contains('test'), 'Bisna should contain module "test".');
-    ok( ! Bisna.contains('another-test'), 'Bisna should NOT contain module "another-test".');
+    ok(Bisna.isRegistered('test'), 'Bisna should contain module "test".');
+
+    Bisna.unregister('test');
+
+    ok( ! Bisna.isRegistered('test'), 'Bisna should NOT contain module "test".');
 });
 
-test('Test contains instance', function () {
+test('Test isRegistered', 2, function () {
     Bisna.register('test', function () { return {}; });
 
-    ok(Bisna.contains('test', false), 'Bisna should contain module "test".');
-    ok( ! Bisna.contains('test', true), 'Bisna should NOT contain module instance "test".');
-
-    Bisna.resolve('test');
-
-    ok(Bisna.contains('test', true), 'Bisna should contain module instance "test".');
-});
-
-test('Test dispose', function () {
-    Bisna.register('test', function () { return {}; });
-
-    ok(Bisna.contains('test'), 'Bisna should contain module "test".');
-
-    Bisna.dispose('test');
-
-    ok( ! Bisna.contains('test'), 'Bisna should NOT contain module "test".');
+    ok(Bisna.isRegistered('test'), 'Bisna should contain module "test".');
+    ok( ! Bisna.isRegistered('another-test'), 'Bisna should NOT contain module "another-test".');
 });
 
 test('Test resolve', 1, function () {
@@ -54,6 +42,30 @@ test('Test resolve', 1, function () {
     Bisna.resolve('test');
 });
 
+test('Test dispose', 3, function () {
+    Bisna.register('test', function () { return {}; });
+
+    ok( ! Bisna.contains('test'), 'Bisna should NOT contain module instance "test".');
+
+    Bisna.resolve('test');
+
+    ok(Bisna.contains('test'), 'Bisna should contain module instance "test".');
+
+    Bisna.dispose('test');
+
+    ok( ! Bisna.contains('test'), 'Bisna should NOT contain module "test".');
+});
+
+test('Test contains', 2, function () {
+    Bisna.register('test', function () { return {}; });
+
+    ok( ! Bisna.contains('test'), 'Bisna should NOT contain module instance "test".');
+
+    Bisna.resolve('test');
+
+    ok(Bisna.contains('test'), 'Bisna should contain module instance "test".');
+});
+
 test('Test multiple resolve calls return same instance', 1, function () {
     var m1, m2;
 
@@ -63,4 +75,15 @@ test('Test multiple resolve calls return same instance', 1, function () {
     m2 = Bisna.resolve('test');
 
     equal(m1, m2, 'Module should resolve to same instance.');
+});
+
+test('Test constructor call is lazy-loaded', 1, function () {
+    Bisna.register('test', function () {
+        ok(true, 'Constructor is lazy-loaded');
+
+        return {};
+    });
+
+
+    Bisna.resolve('test');
 });

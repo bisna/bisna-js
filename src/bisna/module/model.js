@@ -87,7 +87,7 @@ Bisna.register('model', function (Bisna) {
          */
         get: function (name)
         {
-            var propertyValue = this[name];
+            var propertyValue = this[name] || null;
 
             if (typeof propertyValue === 'function') {
                 return propertyValue.call(this);

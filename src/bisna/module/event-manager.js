@@ -68,7 +68,7 @@ Bisna.register('event-manager', function (Bisna) {
             listenerTypeList = listenerList[type];
 
             for (index = 0, length = listenerTypeList.length; index < length; index++) {
-                if (listenerTypeList[index].handler !== handler) {
+                if (listenerTypeList[index].handler === handler) {
                     listenerTypeList.splice(index, 1);
 
                     break;
