@@ -1,15 +1,15 @@
-Bisna.register('model', function (Bisna) {
+Bisna.register('entity-entity-generator', function (Bisna) {
 
     /**
-     * Create and initialize a new Model instance
+     * Create and initialize a new Entity instance
      *
      * @param attributes    Object containing attributes or initializer function
      *
      * @throws Error
      *
-     * @return Model
+     * @return Entity
      */
-    var Model = function (attributes)
+    var Entity = function (attributes)
     {
         switch (typeof attributes) {
             case 'object':
@@ -25,7 +25,7 @@ Bisna.register('model', function (Bisna) {
         }
     };
 
-    Model.prototype = {
+    Entity.prototype = {
         /**
          * Define property value
          *
@@ -43,7 +43,8 @@ Bisna.register('model', function (Bisna) {
 
             // Turn into a fake multiple set
             if (typeof name !== 'object') {
-                propertyList = {name: value};
+                propertyList = {};
+                propertyList[name] = value;
             }
 
             for (propertyName in propertyList) {
@@ -111,26 +112,18 @@ Bisna.register('model', function (Bisna) {
 
     return {
         /**
-         * Create Model instance
+         * Generate Entity class mapping
          *
-         * @param attributes    Object containing attributes or initializer function
+         * @param klass Entity custom methods
          *
-         * @return Model        Model instance
+         * @return Entity
          */
-        create: function (attributes)
+        generate: function (klass)
         {
-            return new Model(attributes);
-        },
+            Bisna.extend(klass, Entity);
 
-        /**
-         * Register a Model plugin
-         *
-         * @param name      Plugin name
-         * @param handler   Plugin handler function
-         */
-        registerPlugin: function (name, handler)
-        {
-            Model.prototype[name] = handler;
+            return klass;
         }
     };
+
 });

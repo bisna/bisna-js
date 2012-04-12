@@ -52,7 +52,7 @@ var Bisna = (function () {
                 return instanceList[name];
             }
 
-            instanceList[name] = moduleList[name].call({}, Bisna);
+            instanceList[name] = moduleList[name].call({name: name}, Bisna);
 
             if (typeof instanceList[name].init === 'function') {
                 instanceList[name].init();
@@ -91,6 +91,24 @@ var Bisna = (function () {
         contains: function (name)
         {
             return instanceList.hasOwnProperty(name);
+        },
+
+        /**
+         * Extend a child class from a parent class
+         *
+         * @param child     Child class mapping
+         * @param parent    Parent class mapping
+         */
+        extend: function (child, parent)
+        {
+            var tmp = function () {};
+
+            tmp.prototype = parent.prototype;
+
+            child.superClass = parent.prototype;
+            child.prototype = new tmp();
+
+            child.prototype.constructor = child;
         }
     };
 

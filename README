@@ -1,0 +1,31 @@
+Bisna.register('core.user.user', function (Bisna) {
+
+    var EntityManager = Bisna.resolve('entity-manager');
+
+    return EntityManager.generateEntity({
+        getFullName: function () {
+            return this.get('lastName') + ', ' + this.get('firstName');
+        }
+    });
+
+});
+
+
+Bisna.register('core.user.service.user', function (Bisna) {
+
+    var EntityManager = Bisna.resolve('entity-manager'),
+        Service;
+
+    Service = EntityManager.generateService({
+        getEndpoint: function () {
+            return '/rest/v1/core/user/user';
+        },
+
+        getEntity: function () {
+            return Bisna.resolve('core.user.user');
+        }
+    });
+
+    return new Service('user');
+
+});
